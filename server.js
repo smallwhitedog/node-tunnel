@@ -2,8 +2,18 @@
 
 const net = require('net')
 const uuid = require('uuid/v4')
+const express = require('express')
+const http = require('http')
 const { tryParseJSON, log, types, verifyDataJson, crypt } = require('./utils')
 const { CLIENT, AGENT } = types
+const port = process.env.PORT || 5000
+const web = express()
+const server = http.createServer(web)
+
+server.listen(port, () => console.log('Server listening at port %d', port))
+web.get('/', async (req, res) => {
+  res.send('ok!')
+})
 
 let portsFrom = parseInt(process.env.N_T_SERVER_PORTS_FROM) || 3005
 let portsTo = parseInt(process.env.N_T_SERVER_PORTS_TO) || 3009
@@ -12,6 +22,8 @@ const serviceServerPort = parseInt(process.env.N_T_SERVER_PORT) || 1337
 
 let connections = {}
 let pipes = {}
+
+
 
 let serviceServer = net.createServer(serviceSocket => {
   function onData (dataEnc) {
